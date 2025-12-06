@@ -37,7 +37,7 @@ The Smart Contract uses a Factory pattern to deploy isolated instances for users
 ## Contract Addresses (Arc Testnet)
 | Contract | Address |
 |----------|---------|
-| **ArcQuestV3_Native** | `[0xe1629f143abBcb21D0d22c45b856c0945a94Ce76]` |
+| **ArcQuestV3_Native** | `0xe1629f143abBcb21D0d22c45b856c0945a94Ce76` |
 | **TAN Token** | `0x570D2fA99996a59af5e29270e6059383216Fe37a` |
 
 ## Author
