@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArcQuest /// Dashboard Vibrant</title>
+    <style>
+        :root { 
+            --bg: #0b0e11; 
+            --card-bg: #15191e; 
+            --text: #e2e8f0; 
+            --text-muted: #94a3b8;
+            --accent: #3b82f6; /* Xanh dương chủ đạo */
+            --accent-hover: #2563eb;
+            --success: #10b981; /* Xanh lá */
+            --warning: #f59e0b; /* Cam vàng */
+            --danger: #ef4444; /* Đỏ */
+            --border: #2d3748; 
+            --glow: rgba(59, 130, 246, 0.5);
+        }
+        
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', 'Segoe UI', sans-serif; padding: 20px; display: flex; justify-content: center; }
+        
+        .container { 
+            width: 100%; max-width: 700px; 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            background: var(--card-bg); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); 
+            overflow: hidden; 
+        }
+        
+        /* HEADER */
+        .header { 
+            background: rgba(21, 25, 30, 0.95); 
+            padding: 18px 30px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; justify-content: space-between; align-items: center; 
+            backdrop-filter: blur(5px);
+        }
+        .brand { 
+            font-weight: 900; font-size: 20px; 
+            background: linear-gradient(90deg, #60a5fa, #a78bfa); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            letter-spacing: -0.5px; 
+        }
+        
+        .wallet-badge { 
+            background: #1e293b; padding: 6px 14px; border-radius: 30px; 
+            font-size: 13px; font-family: 'Consolas', monospace; font-weight: 600;
+            color: var(--text-muted); border: 1px solid var(--border); transition: 0.3s;
+        }
+        .wallet-badge.connected { color: var(--success); border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        
+        /* DISCONNECT BTN */
+        .btn-disconnect {
+            background: transparent; border: none; color: var(--danger); 
+            font-size: 12px; font-weight: bold; cursor: pointer; margin-left: 10px;
+            display: none;
+        }
+        .btn-disconnect:hover { text-decoration: underline; }
+
+        /* CONTENT */
+        .content { padding: 30px; }
+        
+        /* STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .stat-card { 
+            background: #1a202c; padding: 20px; border-radius: 12px; border: 1px solid var(--border); 
+            transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 24px; font-weight: 800; color: white; margin-top: 8px; }
+        .stat-icon { position: absolute; right: 15px; top: 15px; opacity: 0.1; font-size: 40px; }
+
+        /* QUEST BOXES */
+        .quest-box { 
+            border: 1px solid var(--border); padding: 25px; margin-bottom: 25px; 
+            border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%); 
+        }
+        .quest-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .quest-title { font-weight: 800; font-size: 18px; color: white; display: flex; align-items: center; gap: 10px; }
+        .quest-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+        
+        /* BADGES */
+        .badge { padding: 4px 10px; font-size: 11px; border-radius: 6px; font-weight: 700; display: inline-block; }
+        .badge.streak { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge.total { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge.fee { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        /* BUTTONS */
+        .btn { width: 100%; border: none; padding: 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 14px; }
+        
+        .btn-connect { 
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); 
+            color: white; font-size: 16px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); 
+        }
+        .btn-connect:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5); }
+        
+        .btn-gm { 
+            background: linear-gradient(135deg, var(--success), #059669); color: white; 
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); 
+        }
+        .btn-gm:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-gm:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        /* DEPLOY BUTTONS */
+        .deploy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .btn-deploy { 
+            background: #1e293b; border: 1px solid var(--border); color: var(--text); 
+            padding: 16px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; 
+        }
+        .btn-deploy:hover { 
+            border-color: var(--accent); background: #252b36; 
+            box-shadow: 0 0 0 1px var(--accent); color: white;
+        }
+        .btn-deploy strong { font-size: 14px; font-weight: 800; }
+        .btn-deploy span { font-size: 11px; color: var(--text-muted); font-weight: normal; }
+
+        /* LIST */
+        .list-container { 
+            margin-top: 20px; max-height: 180px; overflow-y: auto; 
+            background: #0f1216; border-radius: 8px; border: 1px solid var(--border); 
+        }
+        .list-item { 
+            padding: 10px 15px; border-bottom: 1px solid #1e293b; 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 13px; color: var(--text-muted); 
+        }
+        .list-item:hover { background: #161b22; color: white; }
+        .list-item:last-child { border-bottom: none; }
+        .list-item a { 
+            color: var(--accent); text-decoration: none; font-weight: 600; font-size: 11px; 
+            background: rgba(59, 130, 246, 0.1); padding: 4px 8px; border-radius: 4px; 
+        }
+        .list-item a:hover { background: var(--accent); color: white; }
+
+        /* LOGS */
+        .console-log { 
+            font-family: 'Consolas', monospace; font-size: 12px; color: #4ade80; 
+            margin-top: 30px; border-top: 1px solid var(--border); padding-top: 15px; 
+            max-height: 120px; overflow-y: auto; background: black; padding: 15px; border-radius: 8px;
+        }
+        .log-item { margin-bottom: 4px; display:flex; gap:10px; }
+        .log-time { color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="brand">/// ARC_QUEST</div>
+            <div style="display:flex; align-items:center;">
+                <div id="walletStatus" class="wallet-badge">Wallet Not Connected</div>
+                <button id="btnDisconnect" class="btn-disconnect" onclick="disconnect()">Disconnect</button>
+            </div>
+        </div>
+
+        <div class="content">
+            
+            <button id="btnConnect" class="btn btn-connect" onclick="connectWallet()">🚀 Connect Wallet to Start</button>
+
+            <div id="dashboard" style="display:none;">
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">⛽</div>
+                        <div class="stat-label">USDC Balance</div>
+                        <div class="stat-value" id="balUSDC">0.0000</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-label">TAN Reward</div>
+                        <div class="stat-value" id="balTAN">0.00</div>
+                    </div>
+                </div>
+
+                <div class="quest-box">
+                    <div class="quest-header">
+                        <div class="quest-title">Daily Check-in</div>
+                        <div style="display:flex; gap:5px;">
+                            <span class="badge streak">🔥 Streak: <span id="streakDisplay">0</span></span>
+                            <span class="badge total">∑ Total: <span id="totalDisplay">0</span></span>
+                        </div>
+                    </div>
+                    <p class="quest-desc">Ping the Arc Network daily to maintain your streak and earn TAN tokens.</p>
+                    
+                    <button id="btnGM" class="btn btn-gm" onclick="doGM()">EXECUTE GM</button>
+                    <div id="timerGM" style="text-align:center; margin-top:10px; font-size:13px; font-weight:600; color:var(--text-muted);"></div>
+                </div>
+
+                <div class="quest-box">
+                    <div class="quest-header">
+                        <div class="quest-title">Quick Deployer</div>
+                        <span class="badge fee">⚡ Fee: 0.1 USDC</span>
+                    </div>
+                    <p class="quest-desc">Deploy pre-built smart contracts instantly. Payment is handled natively via USDC.</p>
+                    
+                    <div class="deploy-grid">
+                        <button class="btn btn-deploy" onclick="doDeploy(1)">
+                            <strong>SIMPLE</strong>
+                            <span>Identity Base</span>
+                        </button>
+                        <button class="btn btn-deploy" onclick="doDeploy(2)">
+                            <strong>VAULT</strong>
+                            <span>Defi Storage</span>
+                        </button>
+                        <button class="btn btn-deploy" onclick="doDeploy(3)">
+                            <strong>MEMO</strong>
+                            <span>On-chain Note</span>
+                        </button>
+                    </div>
+
+                    <div id="deployList" class="list-container">
+                        <div style="text-align:center; color: var(--text-muted); padding: 30px;">No deployments yet.</div>
+                    </div>
+                </div>
+
+                <div class="console-log" id="logs">
+                    <div class="log-item"><span class="log-time">[System]</span> Ready to initialize...</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+    <script>
+        // --- CONFIG ---
+        const QUEST_ADDR = "0xe1629f143abBcb21D0d22c45b856c0945a94Ce76"; 
+        const TAN_ADDR = "0x570D2fA99996a59af5e29270e6059383216Fe37a"; 
+        
+        const QUEST_ABI = [
+            "function getUserStatus(address) view returns (uint256, uint256, uint256, address[])",
+            "function gm() public",
+            "function deployBase(uint8 _type) public payable"
+        ];
+        const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
+
+        const TYPE_NAMES = {1: "Identity Base", 2: "Vault Base", 3: "Memo Base"};
+
+        let provider, signer, questContract, tanContract, userAddr;
+        let timerInterval;
+
+        function log(msg) {
+            const box = document.getElementById("logs");
+            const time = new Date().toLocaleTimeString('en-US', {hour12: false});
+            box.innerHTML += `<div class="log-item"><span class="log-time">[${time}]</span> ${msg}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function connectWallet() {
+            if (!window.ethereum) return log("Error: No Wallet Found");
+            
+            const network = { name: "Arc Testnet", chainId: 5042002, ensAddress: null };
+            provider = new ethers.BrowserProvider(window.ethereum, network);
+            signer = await provider.getSigner();
+            userAddr = await signer.getAddress();
+            
+            // UI Update
+            const shortAddr = `${userAddr.slice(0, 6)}...${userAddr.slice(-4)}`;
+            const badge = document.getElementById("walletStatus");
+            badge.innerText = shortAddr;
+            badge.classList.add("connected");
+            
+            document.getElementById("btnConnect").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+            document.getElementById("btnDisconnect").style.display = "block";
+            
+            questContract = new ethers.Contract(QUEST_ADDR, QUEST_ABI, signer);
+            tanContract = new ethers.Contract(TAN_ADDR, ERC20_ABI, provider);
+            
+            log("Connected to Arc Network");
+            updateData();
+            setInterval(updateData, 5000); 
+        }
+
+        function disconnect() {
+            location.reload();
+        }
+
+        async function updateData() {
+            if(!userAddr) return;
+            try {
+                // Balance
+                const balNative = await provider.getBalance(userAddr);
+                document.getElementById("balUSDC").innerText = parseFloat(ethers.formatEther(balNative)).toFixed(4);
+                const balToken = await tanContract.balanceOf(userAddr);
+                document.getElementById("balTAN").innerText = parseFloat(ethers.formatEther(balToken)).toFixed(2);
+
+                // Status
+                const data = await questContract.getUserStatus(userAddr);
+                document.getElementById("streakDisplay").innerText = data[2];
+                document.getElementById("totalDisplay").innerText = data[1];
+
+                // Timer
+                const lastGM = Number(data[0]);
+                const nextGM = lastGM + 86400;
+                
+                if(timerInterval) clearInterval(timerInterval);
+                const updateTimer = () => {
+                    const now = Math.floor(Date.now() / 1000);
+                    const diff = nextGM - now;
+                    const btn = document.getElementById("btnGM");
+                    const txt = document.getElementById("timerGM");
+
+                    if (diff <= 0) {
+                        btn.disabled = false;
+                        btn.innerText = "EXECUTE GM";
+                        txt.innerHTML = "<span style='color:var(--success)'>● Ready to Mint</span>";
+                        clearInterval(timerInterval);
+                    } else {
+                        btn.disabled = true;
+                        btn.innerText = "COOLDOWN ACTIVE";
+                        const h = Math.floor(diff / 3600).toString().padStart(2, '0');
+                        const m = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+                        const s = (diff % 60).toString().padStart(2, '0');
+                        txt.innerText = `Next mint in: ${h}:${m}:${s}`;
+                    }
+                };
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+
+                // List
+                const bases = data[3];
+                const listDiv = document.getElementById("deployList");
+                if(bases.length > 0) {
+                    const items = [...bases].reverse().map((b, i) => `
+                        <div class="list-item">
+                            <span style="font-family:'Consolas',monospace">#${bases.length - i} ${b.slice(0,8)}...${b.slice(-6)}</span>
+                            <a href="https://testnet.arcscan.app/address/${b}" target="_blank">VIEW ↗</a>
+                        </div>
+                    `).join("");
+                    listDiv.innerHTML = items;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        async function doGM() {
+            try {
+                const tx = await questContract.gm();
+                log("GM Transaction Sent...");
+                await tx.wait();
+                log("GM Success! Reward received.");
+                updateData();
+            } catch(e) { log("Error: " + (e.shortMessage || e.message)); }
+        }
+
+        async function doDeploy(type) {
+            try {
+                const name = TYPE_NAMES[type];
+                log(`Deploying ${name}...`);
+                const tx = await questContract.deployBase(type, { value: ethers.parseEther("0.1") });
+                await tx.wait();
+                log(`${name} Deployed Successfully!`);
+                updateData();
+            } catch(e) { log("Error: " + (e.shortMessage || e.message)); }
+        }
+    </script>
+</body>
+</html>
