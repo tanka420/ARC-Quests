@@ -1,17 +1,44 @@
-# ArcQuest - Native Payment dApp on Arc Network
+# 🛡️ ArcQuest: Native Gas Protocol Demo
 
-This project demonstrates a quest board dApp deployed on Arc Testnet.
-It features native USDC gas payments and daily engagement tracking.
+ArcQuest is a decentralized quest platform built on **Arc Network (Circle)**. It demonstrates the power of **Native USDC Gas Abstraction** and **EIP-6963 Multi-Wallet** connectivity.
 
-## Features
-- **Smart Contract:** Solidity v0.8.28
-- **Frontend:** Vanilla JS + Ethers.js
-- **Network:** Arc Testnet (Circle)
+![Project Status](https://img.shields.io/badge/Status-Live-00F0FF?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## Structure
-- `/contracts`: Solidity source codes (V3 Native).
-- `/scripts`: Deployment and stress-test scripts (spam.js).
-- `/frontend`: The web interface hosted on Vercel.
+## 🌐 Live Demo
+👉 **Experience the App:** [https://arc-quests.vercel.app/](https://arc-quests.vercel.app/)  
+*(Requires Arc Testnet & Testnet USDC)*
 
-## Live Demo
-https://arc-quests.vercel.app/
+## ✨ Key Features (Technical Highlights)
+
+### 1. Native USDC Payments ⛽
+Unlike traditional EVM chains, ArcQuest leverages Arc's native gas feature.
+- **Zero Approval:** Users pay `0.1 USDC` directly in the transaction `value` field.
+- **Gas Optimization:** Eliminates the specific ERC-20 `approve()` step, saving gas and improving UX.
+
+### 2. EIP-6963 Multi-Wallet Injection 🔌
+Goodbye wallet conflicts! ArcQuest supports:
+- **Metamask** (Standard)
+- **OKX Wallet** (via `window.okxwallet`)
+- **Browser Injected** (Generic)
+
+### 3. Factory Pattern Architecture 🏭
+The Smart Contract uses a Factory pattern to deploy isolated instances for users:
+- `IdentityBase`: Simple ownership contract.
+- `VaultBase`: Secure asset storage logic.
+- `MemoBase`: On-chain immutable notes.
+
+## 🛠️ Tech Stack
+- **Frontend:** Vanilla JS, Ethers.js v6
+- **Smart Contract:** Solidity 0.8.28, Hardhat
+- **Hosting:** Vercel (CI/CD)
+- **Design:** Neon Cyberpunk UI (Glassmorphism + Particle Network)
+
+## 📜 Contract Addresses (Arc Testnet)
+| Contract | Address |
+|----------|---------|
+| **ArcQuest V4** | `[ĐIỀN_ĐỊA_CHỈ_QUEST_NATIVE_CỦA_BẠN_VÀO_ĐÂY]` |
+| **TAN Token** | `0x570D2fA99996a59af5e29270e6059383216Fe37a` |
+
+## 👨‍💻 Author
+Built with ❤️ by **[TÊN_GITHUB_CỦA_BẠN]**.
